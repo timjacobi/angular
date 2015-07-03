@@ -201,6 +201,17 @@ export function main() {
              ObservableWrapper.subscribe(http.head(url), res => {});
            }));
       });
+      
+      describe('.request()', () => {
+        it('should perform a post request for given configuration', inject([AsyncTestCompleter], async => {
+             ObservableWrapper.subscribe(backend.connections, c => {
+               expect(c.request.method).toBe(RequestMethods.POST);
+               backend.resolveAllConnections();
+               async.done();
+             });
+             ObservableWrapper.subscribe(http.request(url, {method: RequestMethods.POST}), res => {});
+           }));
+      });
     });
   });
 }

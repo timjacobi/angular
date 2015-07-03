@@ -10,7 +10,7 @@ function httpRequest(backend: ConnectionBackend, request: Request): EventEmitter
   return backend.createConnection(request).response;
 }
 
-function mergeOptions(defaultOpts, providedOpts, method, url): RequestOptions {
+function mergeOptions(defaultOpts, providedOpts, url, method?): RequestOptions {
   var newOptions = defaultOpts;
   if (isPresent(providedOpts)) {
     // Hack so Dart can used named parameters
@@ -115,7 +115,7 @@ export class Http {
     if (isString(url)) {
       responseObservable = httpRequest(
           this._backend,
-          new Request(mergeOptions(this._defaultOptions, options, RequestMethods.GET, url)));
+          new Request(mergeOptions(this._defaultOptions, options, url)));
     } else if (url instanceof Request) {
       responseObservable = httpRequest(this._backend, url);
     }
@@ -127,7 +127,7 @@ export class Http {
    */
   get(url: string, options?: IRequestOptions): EventEmitter {
     return httpRequest(this._backend, new Request(mergeOptions(this._defaultOptions, options,
-                                                               RequestMethods.GET, url)));
+                                                               url, RequestMethods.GET)));
   }
 
   /**
@@ -137,7 +137,7 @@ export class Http {
     return httpRequest(
         this._backend,
         new Request(mergeOptions(this._defaultOptions.merge(new RequestOptions({body: body})),
-                                 options, RequestMethods.POST, url)));
+                                 options, url, RequestMethods.POST)));
   }
 
   /**
@@ -147,7 +147,7 @@ export class Http {
     return httpRequest(
         this._backend,
         new Request(mergeOptions(this._defaultOptions.merge(new RequestOptions({body: body})),
-                                 options, RequestMethods.PUT, url)));
+                                 options, url, RequestMethods.PUT)));
   }
 
   /**
@@ -155,7 +155,7 @@ export class Http {
    */
   delete (url: string, options?: IRequestOptions): EventEmitter {
     return httpRequest(this._backend, new Request(mergeOptions(this._defaultOptions, options,
-                                                               RequestMethods.DELETE, url)));
+                                                               url, RequestMethods.DELETE)));
   }
 
   /**
@@ -165,7 +165,7 @@ export class Http {
     return httpRequest(
         this._backend,
         new Request(mergeOptions(this._defaultOptions.merge(new RequestOptions({body: body})),
-                                 options, RequestMethods.PATCH, url)));
+                                 options, url, RequestMethods.PATCH)));
   }
 
   /**
@@ -173,6 +173,6 @@ export class Http {
    */
   head(url: string, options?: IRequestOptions): EventEmitter {
     return httpRequest(this._backend, new Request(mergeOptions(this._defaultOptions, options,
-                                                               RequestMethods.HEAD, url)));
+                                                               url, RequestMethods.HEAD)));
   }
 }
